@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth0 Security Lab - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+        .auth-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #007acc, #0056b3);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,122,204,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,122,204,0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #a71d2a);
+            color: white;
+            box-shadow: 0 2px 8px rgba(220,53,69,0.3);
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220,53,69,0.4);
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            color: white;
+            box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007acc;
+        }
+        .user-info h3 {
+            margin-top: 0;
+            color: #007acc;
+        }
+        .user-details {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .features {
+            margin-top: 30px;
+        }
+        .features h3 {
+            color: #333;
+            border-bottom: 2px solid #007acc;
+            padding-bottom: 5px;
+        }
+        .features ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .features li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-authenticated { background: #28a745; }
+        .status-anonymous { background: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Auth0 Security Lab</h1>
+            <p>Flask Application with Azure Monitoring</p>
+        </div>
+
+        <div class="auth-section">
+            {% if session %}
+                <h2>
+                    <span class="status-indicator status-authenticated"></span>
+                    Welcome, {{ session.userinfo.name }}!
+                </h2>
+                
+                <div class="nav-links">
+                    <a href="/protected" class="btn btn-primary">🛡️ Protected Area</a>
+                    <a href="/api/activity" class="btn btn-success">📊 Activity Stats</a>
+                    <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+                </div>
+
+                <div class="user-info">
+                    <h3>👤 User Information</h3>
+                    <p><strong>Email:</strong> {{ session.userinfo.email }}</p>
+                    <p><strong>User ID:</strong> {{ session.userinfo.sub }}</p>
+                    <p><strong>Last Login:</strong> {{ session.userinfo.updated_at }}</p>
+                    {% if session.expires_at %}
+                        <p><strong>Token Expires:</strong> {{ session.expires_at | datetime }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="user-info">
+                    <h3>🔍 Raw Session Data</h3>
+                    <div class="user-details">{{ pretty }}</div>
+                </div>
+            {% else %}
+                <h2>
+                    <span class="status-indicator status-anonymous"></span>
+                    Welcome to Auth0 Security Lab
+                </h2>
+                <p>Please log in to access protected features</p>
+                
+                <div class="nav-links">
+                    <a href="/login" class="btn btn-primary">🔑 Login with Auth0</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="features">
+            <h3>🎯 Application Features</h3>
+            <ul>
+                <li>Secure authentication with Auth0 SSO</li>
+                <li>Protected routes with session management</li>
+                <li>Comprehensive activity logging</li>
+                <li>Azure Monitor integration</li>
+                <li>Real-time threat detection</li>
+                <li>Automated security alerts</li>
+            </ul>
+        </div>
+
+        {% if not session %}
+        <div class="features">
+            <h3>🔐 Security Testing</h3>
+            <ul>
+                <li>Try accessing the <a href="/protected" style="color: #007acc;">protected area</a> without logging in</li>
+                <li>Log in and access protected routes multiple times to test monitoring</li>
+                <li>Check Azure Monitor for activity logs</li>
+                <li>Test alert triggers by excessive access (>10 times in 15 minutes)</li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
